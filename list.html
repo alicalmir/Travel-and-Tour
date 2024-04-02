@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+</head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    form {
+        margin-bottom: 20px;
+    }
+
+    input[type="text"],
+    textarea {
+        display: block;
+        margin-bottom: 10px;
+        width: 100%;
+    }
+
+    button {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        opacity: 0.8;
+    }
+
+    .todo-card {
+        background-color: #f0f0f0;
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+
+    .todo-card.completed {
+        background-color: #d3d3d3;
+    }
+</style>
+
+<body>
+    <section class="header">
+        <a href="home.html" class="logo">travel.</a>
+        <nav class="navbar">
+            <a href="dashboard.html" style="cursor: pointer;">Dashboard</a>
+            <a href="customer_support.html" style="cursor: pointer;">Customer Support</a>
+            <a href="list.html" style="cursor: pointer;">List</a>
+            <a onclick="logout()" style="cursor: pointer;">Logout</a>
+        </nav>
+
+        <div id="menu-btn" class="fas fa-bars"></div>
+    </section>
+
+    <div class="heading" style="background:url(images/footer-bg.jpg) no-repeat">
+        <h1>TODO LIST</h1>
+    </div>
+    <br />
+    <br />
+    <form id="addTodoForm" style="justify-content: center;">
+        <input type="text" id="todoTitle" placeholder="Title" required>
+        <textarea id="todoDescription" placeholder="Description"></textarea>
+        <button type="submit">Add Todo</button>
+    </form>
+    <div id="todoList"></div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="./js/todos/todo-service.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Function to display all todos
+            function displayTodos() {
+                var token = localStorage.getItem("user_token");
+                if (!token) {
+                    window.location.replace("login.html");
+                } else {
+                    var token = localStorage.getItem("user_token");
+                    if (!token) {
+                        window.location.replace("login.html");
+                    } else {
+                        $.ajax({
+                            url: 'https://bookingtrips-b98c7c869cca.herokuapp.com/todos',
+                            type: 'GET',
+                            success: function (response) {
+                                if (response.length > 0) {
+                                    var todoList = $('#todoList');
+                                    todoList.empty(); // Clear existing todo list
+
+                                    for (var i = 0; i < response.length; i++) {
+                                        var todo = response[i];
+                                        var todoCardClass = todo.completed ? 'completed' : '';
+                                        var todoItem = '<div class="todo-card ' + todoCardClass + '">' +
+                                            '<h3>' + todo.title + '</h3>' +
+                                            '<p>' + todo.description + '</p>' +
+                                            '</div>';
+                                        todoList.append(todoItem);
+                                    }
+                                } else {
+                                    toastr.info('No todos found.');
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                toastr.error('Error occurred while fetching todos.');
+                            }
+                        });
+                    }
+                }
+            }
+            displayTodos();
+        });
+    </script>
+</body>
+
+</html>

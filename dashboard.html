@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Dashboard</title>
+
+   <!-- CSS -->
+   <link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css" />
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+   <link rel="stylesheet" href="css/style.css">
+
+   <!-- JavaScript -->
+   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+</head>
+<style>
+   /* Display Card Styles */
+   .card {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+   }
+
+   .card p {
+      margin: 10px 0;
+   }
+
+   .card button {
+      background-color: #4caf50;
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+   }
+
+   .card-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+   }
+
+   /* Edit Modal Styles */
+   .modal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
+   }
+
+   .modal-content {
+      background-color: #fefefe;
+      margin: 10% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 400px;
+      border-radius: 4px;
+   }
+
+   .modal h2 {
+      margin-top: 0;
+   }
+
+   .modal label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+   }
+
+   .modal input {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+   }
+
+   .modal button[type="submit"] {
+      background-color: #4caf50;
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+   }
+
+   .modal .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+   }
+
+   .modal .close:hover,
+   .modal .close:focus {
+      color: #000;
+      text-decoration: none;
+      cursor: pointer;
+   }
+</style>
+
+<body>
+
+   <!-- JavaScript -->
+   <script>
+      function logout() {
+         localStorage.clear();
+         window.location.replace("login.html");
+      }
+
+      function getBookings() {
+         var token = localStorage.getItem("user_token");
+         if (!token) {
+            window.location.replace("login.html");
+         } else {
+            var token = localStorage.getItem("user_token");
+            if (!token) {
+               window.location.replace("login.html");
+            } else {
+               $.ajax({
+                  url: "https://bookingtrips-b98c7c869cca.herokuapp.com/bookings",
+                  type: "GET",
+                  success: function (response) {
+                     displayBookings(response);
+                  },
+                  error: function (xhr, status, error) {
+                     toastr.error(xhr.responseJSON.error);
+                  }
+               });
+            }
+         }
+      }
+
+      function displayBookings(bookings) {
+         var cardContainer = document.querySelector(".card-container");
+         cardContainer.innerHTML = ""; // Clear existing content
+
+
+         bookings.forEach(function (booking) {
+            // Create a card element to display the booking data
+            var card = document.createElement("div");
+            card.classList.add("card");
+
+
+            // Create card content
+            var bookingId = document.createElement("p");
+            bookingId.innerText = "Booking ID: " + booking.id;
+            card.appendChild(bookingId);
+
+            var bookingName = document.createElement("p");
+            bookingName.innerText = "Name: " + booking.name;
+            card.appendChild(bookingName);
+
+            var bookingDate = document.createElement("p");
+            bookingDate.innerText = "Date: " + booking.departure_date;
+            card.appendChild(bookingDate);
+
+            var bookingQuantity = document.createElement("p");
+            bookingQuantity.innerText = "Guests: " + booking.quantity;
+            card.appendChild(bookingQuantity);
+
+            var bookingAddress = document.createElement("p");
+            bookingAddress.innerText = "Location: " + booking.address;
+            card.appendChild(bookingAddress);
+
+            // Create the Edit button
+            var editButton = document.createElement("button");
+            editButton.innerText = "Edit";
+            editButton.addEventListener("click", function () {
+               openEditModal(booking);
+            });
+            card.appendChild(editButton);
+
+            // Create the Delete button
+            var deleteButton = document.createElement("button");
+            deleteButton.innerText = "Delete";
+            deleteButton.addEventListener("click", function () {
+               deleteBooking(booking.id);
+            });
+            card.appendChild(deleteButton);
+
+            // Append the card to the booking section
+            cardContainer.appendChild(card);
+         });
+      }
+
+      function openEditModal(booking) {
+         var editModal = document.getElementById("editModal");
+
+         // Set the booking data in the modal form
+         document.getElementById("name").value = booking.name;
+         document.getElementById("date").value = booking.arrival_date;
+         document.getElementById("location").value = booking.address;
+         document.getElementById("quantity").value = booking.quantity;
+
+         // Show the modal
+         editModal.style.display = "block";
+
+         // Handle the form submission
+         var editForm = document.getElementById("editForm");
+         editForm.addEventListener("submit", function (e) {
+            e.preventDefault(); // Prevent the default form submission
+
+            var newName = document.getElementById("name").value;
+            var newDate = document.getElementById("date").value;
+            var newLocation = document.getElementById("location").value;
+            var newGuests = document.getElementById("quantity").value;
+
+            // Perform the update request
+            updateOrDeleteBooking(booking.id, newName, newDate, newLocation, newGuests, false);
+
+            // Close the modal
+            editModal.style.display = "none";
+         });
+
+         // Handle the modal close button
+         var closeModal = document.querySelector("#editModal .close");
+         closeModal.addEventListener("click", function () {
+            editModal.style.display = "none";
+         });
+
+         // Handle clicking outside the modal to close it
+         window.addEventListener("click", function (event) {
+            if (event.target === editModal) {
+               editModal.style.display = "none";
+            }
+         });
+      }
+
+      function updateOrDeleteBooking(id, name, arrival_date, address, quantity, isDelete) {
+         var url = isDelete ? "https://bookingtrips-b98c7c869cca.herokuapp.com/delete_booking/" + id : "https://bookingtrips-b98c7c869cca.herokuapp.com/edit_booking/" + id;
+
+         $.ajax({
+            url: url,
+            type: isDelete ? "DELETE" : "PUT",
+            data: JSON.stringify({
+               name: name,
+               arrival_date: arrival_date,
+               address: address,
+               quantity: quantity,
+            }),
+            contentType: 'application/json',
+            success: function (response) {
+               toastr.success(isDelete ? "Booking deleted successfully" : "Booking updated successfully");
+               closeEditModal();
+               fetchBookings();
+            },
+            error: function (xhr, status, error) {
+               toastr.error("An error occurred while updating/deleting the booking");
+            }
+         });
+      }
+
+      function deleteBooking(id) {
+         var confirmation = confirm("Are you sure you want to delete this booking?");
+
+         if (confirmation) {
+            updateOrDeleteBooking(id, null, null, null, null, true);
+         }
+      }
+      // Call getBookings function to fetch and display the bookings on page load
+      getBookings();
+   </script>
+   <!-- header section starts  -->
+
+   <section class="header">
+
+      <a href="home.html" class="logo">travel.</a>
+
+      <nav class="navbar">
+         <a href="dashboard.html" style="cursor: pointer;" >Dashboard</a>
+         <a href="customer_support.html" style="cursor: pointer;">Customer Support</a>
+         <a href="list.html" style="cursor: pointer;">List</a>
+         <a onclick="logout()" style="cursor: pointer;">Logout</a>
+      </nav>
+
+      <div id="menu-btn" class="fas fa-bars"></div>
+
+   </section>
+
+   <!-- header section ends -->
+
+   <div class="heading" style="background:url(images/footer-bg.jpg) no-repeat">
+      <h1>Dashboard</h1>
+   </div>
+
+   <!-- about section starts  -->
+   <!-- Edit Modal -->
+   <div id="editModal" class="modal">
+      <div class="modal-content">
+         <span class="close">&times;</span>
+         <h2>Edit Booking</h2>
+         <form id="editForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+            <label for="date">Date:</label>
+            <input type="text" id="date" name="date" required>
+            <label for="quantity">Guests:</label>
+            <input type="text" id="quantity" name="quantity" required>
+            <label for="location">Location:</label>
+            <input type="text" id="location" name="location" required>
+            <button type="submit" id="saveBtn">Save</button>
+         </form>
+      </div>
+   </div>
+
+
+   <section class="about">
+      <div class="content">
+         <h3>Want to know what to bring?</h3>
+         <a href="list.html" style="font-size: 25px; cursor: pointer;">Create your List now</a>
+      </div>
+   </section>
+
+   <section class="about">
+      <div class="booking content">
+         <h3>Your Bookings : </h3>
+         <br />
+         <div class="card-container"></div>
+      </div>
+   </section>
+
+   <!-- footer section ends -->
+
+   <!-- swiper js link  -->
+   <script src="https://unpkg.com/swiper@7/swiper-bundle.min.js"></script>
+
+   <!-- custom js file link  -->
+   <script src="js/script.js"></script>
+
+</body>
+
+</html>

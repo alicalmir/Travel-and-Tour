@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Support</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+<style>
+    h1 {
+        margin-bottom: 20px;
+    }
+
+    .table-container {
+        margin-top: 20px;
+    }
+</style>
+
+<body>
+    <section class="header">
+
+        <a href="home.html" class="logo">travel.</a>
+
+        <nav class="navbar">
+            <a href="dashboard.html" style="cursor: pointer; text-decoration: none;">Dashboard</a>
+            <a href="customer_support.html" style="cursor: pointer; text-decoration: none;">Customer Support</a>
+            <a href="list.html" style="cursor: pointer; text-decoration: none;">List</a>
+            <a onclick="logout()" style="cursor: pointer; text-decoration: none;">Logout</a>
+        </nav>
+
+        <div id="menu-btn" class="fas fa-bars"></div>
+
+    </section>
+
+    <div class="heading" style="background:url(images/footer-bg.jpg) no-repeat">
+        <h1>Customer Support</h1>
+    </div>
+
+    <div class="container">
+        <form id="customerSupportForm">
+            <br />
+            <div class="mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            <div class="mb-3">
+                <label for="message" class="form-label">Message</label>
+                <textarea class="form-control" id="message" name="message" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Load emails on page load
+            loadEmails();
+
+            // Submit the form to send a new email
+            $('#customerSupportForm').submit(function (event) {
+                event.preventDefault();
+
+                var formData = {
+                    name: $('#name').val(),
+                    email: $('#email').val(),
+                    message: $('#message').val()
+                };
+
+                addEmail(formData);
+            });
+
+            // Function to load emails from the server
+            function loadEmails() {
+                var token = localStorage.getItem("user_token");
+                if (!token) {
+                    window.location.replace("login.html");
+                } else {
+                    var token = localStorage.getItem("user_token");
+                    if (!token) {
+                        window.location.replace("login.html");
+                    } else {
+
+                        $.ajax({
+                            url: 'https://bookingtrips-b98c7c869cca.herokuapp.com/customer-support',
+                            type: 'GET',
+                            dataType: 'json',
+                            success: function (response) {
+                                displayEmails(response);
+                            },
+                            error: function () {
+                                alert('Error loading emails.');
+                            }
+                        });
+                    }
+                };
+            }
+            // Function to add a new email to the server
+            function addEmail(formData) {
+                $.ajax({
+                    url: 'https://bookingtrips-b98c7c869cca.herokuapp.com/customer-support',
+                    type: 'POST',
+                    data: JSON.stringify(formData),
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function (response) {
+                        loadEmails();
+                        $('#name').val('');
+                        $('#email').val('');
+                        $('#message').val('');
+
+                        // Open user's email client with pre-filled data
+                        var emailSubject = 'Customer Support - Your Answer';
+                        var emailBody = 'Your answer is stored in the database.';
+                        var mailToLink = 'mailto:' + formData.email + '?subject=' + encodeURIComponent(emailSubject) + '&body=' + encodeURIComponent(emailBody);
+                        window.location.href = mailToLink;
+
+                        // Show success message
+                        alert('Your answer is stored in the database!');
+                    },
+                    error: function () {
+                        alert('Error sending email.');
+                    }
+                });
+            }
+
+            // Function to display emails in the table
+            function displayEmails(emails) {
+                var emailsTableBody = $('#emailsTableBody');
+                emailsTableBody.empty();
+
+                for (var i = 0; i < emails.length; i++) {
+                    var email = emails[i];
+                    var tableRow = $('<tr></tr>');
+                    tableRow.append($('<th scope="row">' + (i + 1) + '</th>'));
+                    tableRow.append($('<td>' + email.name + '</td>'));
+                    tableRow.append($('<td>' + email.email + '</td>'));
+                    tableRow.append($('<td>' + email.message + '</td>'));
+
+                    emailsTableBody.append(tableRow);
+                }
+            }
+        });
+        function logout() {
+            localStorage.clear();
+            window.location.replace("login.html");
+        }
+    </script>
+</body>
+
+</html>
