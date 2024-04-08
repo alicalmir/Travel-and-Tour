@@ -14,10 +14,14 @@
 
    <!-- custom css file link  -->
    <link rel="stylesheet" href="css/style.css">
-
+   <style>
+      .dashboard {
+         display: none;
+      }
+   </style>
 </head>
 <body>
-
+   
 <!-- header section starts  -->
 
 <section class="header">
@@ -29,6 +33,8 @@
       <a href="about.html">about</a>
       <a href="package.html">package</a>
       <a href="book.html">book</a>
+      <a href="dashboard.html" class="dashboard">dashboard</a>
+      <a href="register.html" class="register">register</a>
    </nav>
 
    <div id="menu-btn" class="fas fa-bars"></div>
@@ -205,13 +211,7 @@
          <a href="#"> <i class="fas fa-angle-right"></i> terms of use</a>
       </div>
 
-      <div class="box">
-         <h3>contact info</h3>
-         <a href="#"> <i class="fas fa-phone"></i> +123-456-7890 </a>
-         <a href="#"> <i class="fas fa-phone"></i> +111-222-3333 </a>
-         <a href="#"> <i class="fas fa-envelope"></i> almir.alicIT@gmail.com </a>
-         <a href="#"> <i class="fas fa-map"></i> Sarajevo, BiH - 400104 </a>
-      </div>
+      
 
       <div class="box">
          <h3>follow us</h3>
@@ -223,25 +223,29 @@
 
    </div>
 
-   <div class="credit"> created by <span>mr. web designer</span> | all rights reserved! </div>
-
 </section>
 
 <!-- footer section ends -->
-
-
-
-
-
-
-
-
 
 <!-- swiper js link  -->
 <script src="https://unpkg.com/swiper@7/swiper-bundle.min.js"></script>
 
 <!-- custom js file link  -->
 <script src="js/script.js"></script>
-
+<script>
+   document.addEventListener("DOMContentLoaded", function() {
+      var userToken = localStorage.getItem("user_token");
+      var dashboardLink = document.querySelector(".dashboard");
+      var registerLink = document.querySelector(".register");
+      
+      if (userToken) {
+         dashboardLink.style.display = "inline-block";
+         registerLink.style.display = "none";
+      } else {
+         dashboardLink.style.display = "none";
+         registerLink.style.display = "inline-block";
+      }
+   });
+</script>
 </body>
 </html>

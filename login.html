@@ -5,55 +5,63 @@
    <meta charset="UTF-8">
    <meta http-equiv="X-UA-Compatible" content="IE=edge">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>book</title>
+   <title>Login</title>
 
    <!-- swiper css link  -->
    <link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css" />
 
    <!-- font awesome cdn link  -->
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-   <script>
-$(document).ready(function() {
-  $(".book-form").submit(function(event) {
-    event.preventDefault(); // Prevent the default form submission
 
-    var userToken = localStorage.getItem("user_token");
-    if (!userToken) {
-      alert("You need to be logged in to make a booking.");
-      return;
-    }
-
-    // Get the form data
-    var formData = $(this).serialize();
-
-    // Send an AJAX request
-    $.ajax({
-      url: "https://bookingtrips-b98c7c869cca.herokuapp.com/add_booking",
-      type: "POST",
-      data: formData,
-      beforeSend: function(xhr) {
-         xhr.setRequestHeader("Authorization", userToken);
-      },
-      success: function(response) {
-        alert("Booking successful!");
-        window.location.reload();
-      },
-      error: function(xhr, status, error) {
-        alert("An error occurred. Please try again later.");
-        console.log(xhr.responseText);
-      },
-    });
-  });
-});
-    </script>
    <!-- custom css file link  -->
    <link rel="stylesheet" href="css/style.css">
+
+   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
    <style>
       .dashboard {
          display: none;
       }
    </style>
+   <script>
+$(document).ready(function() {
+  var LoginService = {
+    init: function() {
+      var token = localStorage.getItem("user_token");
+      $("#login-form").validate({
+        submitHandler: function(form) {
+          var entity = Object.fromEntries(new FormData(form).entries());
+          LoginService.login(entity);
+        },
+      });
+    },
+    login: function(entity) {
+      $.ajax({
+        url: "https://bookingtrips-b98c7c869cca.herokuapp.com/login",
+        type: "POST",
+        data: JSON.stringify(entity),
+        contentType: "application/json",
+        dataType: "json",
+        beforeSend: function(xhr) {
+          xhr.setRequestHeader("Authorization", "Bearer " + localStorage.getItem("user_token"));
+        },
+        success: function(result) {
+          toastr.error("Login Successful");
+          var token = result.token;
+          localStorage.setItem("user_token", token); // Save the token without "Bearer" prefix
+          window.location.replace("../dashboard.html");
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+          toastr.error("Login Failed");
+        },
+      });
+    },
+  };
+  LoginService.init();
+});
+   </script>
 
 </head>
 
@@ -64,7 +72,6 @@ $(document).ready(function() {
    <section class="header">
 
       <a href="home.html" class="logo">travel.</a>
-
       <nav class="navbar">
          <a href="home.html">home</a>
          <a href="about.html">about</a>
@@ -80,58 +87,38 @@ $(document).ready(function() {
 
    <!-- header section ends -->
 
-   <div class="heading" style="background:url(images/header-bg-3.png) no-repeat">
-      <h1>book now</h1>
+   <div class="heading" style="background:url(images/header-bg-1.png) no-repeat">
+      <h1>Login Now</h1>
    </div>
 
    <!-- booking section starts  -->
 
    <section class="booking">
 
-      <h1 class="heading-title">book your trip!</h1>
+      <h1 class="heading-title">Let the fun begin!</h1>
 
-      <form action="book_form.php" method="post" class="book-form">
+      <form id="login-form" class="book-form">
 
          <div class="flex">
-            <div class="inputBox">
-               <span>name :</span>
-               <input type="text" placeholder="enter your name" maxlength="30" name="name">
-            </div>
             <div class="inputBox">
                <span>email :</span>
                <input type="email" maxlength="50" placeholder="enter your email" name="email">
             </div>
             <div class="inputBox">
-               <span>phone :</span>
-               <input type="number" maxlength="10" min="0" max="9999999999" placeholder="enter your number"
-                  name="phone">
-            </div>
-            <div class="inputBox">
-               <span>address :</span>
-               <input type="text" maxlength="50" placeholder="enter your address" name="address">
-            </div>
-            <div class="inputBox">
-               <span>where to :</span>
-               <input type="text" placeholder="place you want to visit" name="destination" maxlength="50">
-            </div>
-            <div class="inputBox">
-               <span>how many :</span>
-               <input type="number" min="1" max="99" maxlength="2" placeholder="number of guests" name="quantity">
-            </div>
-            <div class="inputBox">
-               <span>arrivals :</span>
-               <input type="date" name="arrival_date">
-            </div>
-            <div class="inputBox">
-               <span>leaving :</span>
-               <input type="date" name="departure_date">
+               <span>Password</span>
+               <input type="password" placeholder="enter your password" name="password">
             </div>
          </div>
-
          <input type="submit" value="submit" class="btn" name="send">
-
       </form>
-
+      <div style="display: flex; margin-top: 20px; justify-content: center;">
+         <h1>Don't have an account yet?</h1>
+         <div style="margin-left: 15px; margin-top: -4px;">
+            <a href="register.html" style="font-size: 18px; cursor: pointer;">
+               <p>Register</p>
+            </a>
+         </div>
+      </div>
    </section>
 
    <!-- booking section ends -->
@@ -174,19 +161,17 @@ $(document).ready(function() {
 
    </section>
 
-   <!-- footer section ends -->
-
    <!-- swiper js link  -->
    <script src="https://unpkg.com/swiper@7/swiper-bundle.min.js"></script>
 
    <!-- custom js file link  -->
    <script src="js/script.js"></script>
    <script>
-      document.addEventListener("DOMContentLoaded", function () {
+      document.addEventListener("DOMContentLoaded", function() {
          var userToken = localStorage.getItem("user_token");
          var dashboardLink = document.querySelector(".dashboard");
          var registerLink = document.querySelector(".register");
-
+         
          if (userToken) {
             dashboardLink.style.display = "inline-block";
             registerLink.style.display = "none";
