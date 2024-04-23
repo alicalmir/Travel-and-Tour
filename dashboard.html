@@ -133,7 +133,7 @@
                window.location.replace("login.html");
             } else {
                $.ajax({
-                  url: "https://bookingtrips-b98c7c869cca.herokuapp.com/bookings",
+                  url: "http://localhost/Travel-and-Tour/rest/bookings",
                   type: "GET",
                   success: function (response) {
                      displayBookings(response);
@@ -243,7 +243,7 @@
       }
 
       function updateOrDeleteBooking(id, name, arrival_date, address, quantity, isDelete) {
-         var url = isDelete ? "https://bookingtrips-b98c7c869cca.herokuapp.com/delete_booking/" + id : "https://bookingtrips-b98c7c869cca.herokuapp.com/edit_booking/" + id;
+         var url = isDelete ? "http://localhost/Travel-and-Tour/rest/delete_booking/" + id : "http://localhost/Travel-and-Tour/rest/edit_booking/" + id;
 
          $.ajax({
             url: url,

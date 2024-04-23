@@ -23,7 +23,7 @@ $(document).ready(function() {
 
 function loadTodos() {
     $.ajax({
-        url: 'https://bookingtrips-b98c7c869cca.herokuapp.com/todos',
+        url: 'http://localhost/Travel-and-Tour/rest/todos',
         type: 'GET',
         dataType: 'json',
         success: function(response) {
@@ -60,7 +60,7 @@ function displayTodos(todos) {
 
 function addTodoAJAX(todo) {
     $.ajax({
-        url: 'https://bookingtrips-b98c7c869cca.herokuapp.com/add_todo',
+        url: 'http://localhost/Travel-and-Tour/rest/add_todo',
         type: 'POST',
         data: todo,
         dataType: 'json',
