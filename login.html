@@ -39,7 +39,7 @@ $(document).ready(function() {
     },
     login: function(entity) {
       $.ajax({
-        url: "https://bookingtrips-b98c7c869cca.herokuapp.com/login",
+        url: "http://localhost/Travel-and-Tour/rest/login",
         type: "POST",
         data: JSON.stringify(entity),
         contentType: "application/json",
@@ -51,7 +51,7 @@ $(document).ready(function() {
           toastr.error("Login Successful");
           var token = result.token;
           localStorage.setItem("user_token", token); // Save the token without "Bearer" prefix
-          window.location.replace("../dashboard.html");
+          window.location.replace("../Travel-and-Tour/dashboard.html");
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           toastr.error("Login Failed");

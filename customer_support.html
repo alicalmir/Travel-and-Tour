@@ -90,7 +90,7 @@
                     } else {
 
                         $.ajax({
-                            url: 'https://bookingtrips-b98c7c869cca.herokuapp.com/customer-support',
+                            url: 'http://localhost/Travel-and-Tour/rest/customer-support',
                             type: 'GET',
                             dataType: 'json',
                             success: function (response) {
@@ -106,7 +106,7 @@
             // Function to add a new email to the server
             function addEmail(formData) {
                 $.ajax({
-                    url: 'https://bookingtrips-b98c7c869cca.herokuapp.com/customer-support',
+                    url: 'http://localhost/Travel-and-Tour/rest/customer-support',
                     type: 'POST',
                     data: JSON.stringify(formData),
                     dataType: 'json',

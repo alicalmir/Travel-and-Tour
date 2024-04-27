@@ -5,12 +5,12 @@ var UserService = {
                 event.preventDefault();
                 var entity = Object.fromEntries(new FormData(form).entries());
                 UserService.register(entity);
-            },
+            }
         });
     },
     register: function (entity) {
         $.ajax({
-            url: "https://bookingtrips-b98c7c869cca.herokuapp.com/register",
+            url: "http://localhost/Travel-and-Tour/rest/register",
             type: "POST",
             data: JSON.stringify(entity),
             contentType: "application/json",
