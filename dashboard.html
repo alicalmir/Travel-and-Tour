@@ -133,7 +133,7 @@
                window.location.replace("login.html");
             } else {
                $.ajax({
-                  url: "http://localhost/Travel-and-Tour/rest/bookings",
+                  url: "https://665e5edee990e77d3544f75e--eclectic-cocada-04df81.netlify.app/bookings",
                   type: "GET",
                   success: function (response) {
                      displayBookings(response);
@@ -243,7 +243,7 @@
       }
 
       function updateOrDeleteBooking(id, name, arrival_date, address, quantity, isDelete) {
-         var url = isDelete ? "http://localhost/Travel-and-Tour/rest/delete_booking/" + id : "http://localhost/Travel-and-Tour/rest/edit_booking/" + id;
+         var url = isDelete ? "https://665e5edee990e77d3544f75e--eclectic-cocada-04df81.netlify.app/delete_booking/" + id : "https://665e5edee990e77d3544f75e--eclectic-cocada-04df81.netlify.app/edit_booking/" + id;
 
          $.ajax({
             url: url,

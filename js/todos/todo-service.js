@@ -23,7 +23,7 @@ $(document).ready(function() {
 
 function loadTodos() {
     $.ajax({
-        url: 'http://localhost/Travel-and-Tour/rest/todos',
+        url: 'https://665e5edee990e77d3544f75e--eclectic-cocada-04df81.netlify.app/todos',
         type: 'GET',
         dataType: 'json',
         success: function(response) {
@@ -60,7 +60,7 @@ function displayTodos(todos) {
 
 function addTodoAJAX(todo) {
     $.ajax({
-        url: 'http://localhost/Travel-and-Tour/rest/add_todo',
+        url: 'https://665e5edee990e77d3544f75e--eclectic-cocada-04df81.netlify.app/add_todo',
         type: 'POST',
         data: todo,
         dataType: 'json',

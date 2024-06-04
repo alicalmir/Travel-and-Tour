@@ -39,7 +39,7 @@ $(document).ready(function() {
     },
     login: function(entity) {
       $.ajax({
-        url: "http://localhost/Travel-and-Tour/rest/login",
+        url: "https://665e5edee990e77d3544f75e--eclectic-cocada-04df81.netlify.app/login",
         type: "POST",
         data: JSON.stringify(entity),
         contentType: "application/json",
@@ -51,7 +51,7 @@ $(document).ready(function() {
           toastr.error("Login Successful");
           var token = result.token;
           localStorage.setItem("user_token", token); // Save the token without "Bearer" prefix
-          window.location.replace("../Travel-and-Tour/dashboard.html");
+          window.location.replace("https://665e5edee990e77d3544f75e--eclectic-cocada-04df81.netlify.app/dashboard.html");
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           toastr.error("Login Failed");
