@@ -10,7 +10,7 @@ var UserService = {
     },
     register: function (entity) {
         $.ajax({
-            url: "http://localhost/Travel-and-Tour/rest/register",
+            url: "https://665e5edee990e77d3544f75e--eclectic-cocada-04df81.netlify.app/register",
             type: "POST",
             data: JSON.stringify(entity),
             contentType: "application/json",
